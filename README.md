@@ -14,6 +14,8 @@ Publish `site/` with `.github/workflows/pages.yml`. The page is a dependency-fre
 
 Mac 0.3.0: Apple Silicon macOS12+, AU/VST3 and standalone. Development ad-hoc signature; no notarization. Local DSP/native tests, pluginval and strict auval passed. Corresponding source includes pinned JUCE8.0.14 and HRIR attribution.
 
-Windows workflow consumes the release's corresponding-source ZIP, verifies its SHA256, builds/test on a native Windows x64 runner, and uploads the resulting VST3/standalone package. Windows is shown as pending on the page until the build and tests succeed. A native CI build is not a DAW listening test.
+Windows workflow consumes the release's corresponding-source ZIP, verifies its SHA256, builds and tests on a native Windows x64 runner, and uploads the resulting VST3/standalone package. Windows is shown as pending on the page until the build and tests succeed. A native CI build is not a DAW listening test.
 
 Banner artwork uses built-in image generation, based on the native editor's material/color identity; generation prompt and provenance are in `docs/banner-provenance.json`. Screenshots show the actual native plugin, not generated UI. Page-source license: AGPLv3; third-party notices accompany the plugin downloads.
+
+Windows CI builds the explicit `FractalRecall_VST3`, `FractalRecall_Standalone`, `FractalTests` and `FractalProcessorTests` targets. The local macOS screenshot helper (`FractalPreview`) has a console-style entry point and is intentionally outside the Windows shipping build.

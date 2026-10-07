@@ -7,3 +7,5 @@ Mac release contains installed/validated0.3.0 AU/VST3/standalone; ad-hoc signed 
 Windows native build is separate from Pages deployment and not advertised as available until build, DSP/native tests, pluginval and packaging succeed. Mac/local DAW listening and Windows DAW compatibility are not inferred from CI.
 
 Publication uses the dedicated public FRACTAL-RECALL repository; original audio product and outer workspace remain unversioned. Previous local0.2 packages and installed backups remain intact. Store, author website and sibling product links are included; store source is not modified by this task.
+
+Windows run37685888167 compiled VST3, standalone and both test binaries, but the aggregate build failed at the internal screenshot helper (WinMain linker entry point). Shipping workflow now selects the four required targets explicitly; no DSP source change or test removal. Windows availability still requires the complete native test/validator/package gate.

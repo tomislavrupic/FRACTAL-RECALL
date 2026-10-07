@@ -28,7 +28,7 @@ jobs:
         run: |
           cmake -S "$env:SOURCE_DIR" -B build-win -G 'Visual Studio 17 2022' -A x64 -DFRACTAL_PLUGIN=ON "-DJUCE_PATH=$env:SOURCE_DIR/third_party/JUCE" '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>'
           if ($LASTEXITCODE -ne 0) { throw 'Configure failed' }
-          cmake --build build-win --config Release --parallel 4
+          cmake --build build-win --config Release --parallel 4 --target FractalRecall_VST3 FractalRecall_Standalone FractalTests FractalProcessorTests
           if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
       - name: DSP and actual processor checks
         shell: pwsh
