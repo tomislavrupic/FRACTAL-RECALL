@@ -17,7 +17,7 @@ jobs:
           gh release download v0.3.0 --repo $env:GITHUB_REPOSITORY --pattern FRACTAL-RECALL-0.3.0-source.zip --dir incoming
           if ($LASTEXITCODE -ne 0) { throw 'Source download failed' }
           $actual = (Get-FileHash incoming/FRACTAL-RECALL-0.3.0-source.zip -Algorithm SHA256).Hash.ToLower()
-          if ($actual -ne '29f6e0f27c76872862bc6280189c0dc4c769a405a8d0c9650b7169593ca2bc71') { throw 'Corresponding-source checksum mismatch' }
+          if ($actual -ne '07628ab996040f437520887231ac5bf45b0eba0cd3b7d24a90c864773100f0e6') { throw 'Corresponding-source checksum mismatch' }
           Expand-Archive incoming/FRACTAL-RECALL-0.3.0-source.zip incoming/source
           $source = (Resolve-Path incoming/source/FRACTAL-RECALL-0.3.0-source).Path
           "SOURCE_DIR=$source" | Out-File -FilePath $env:GITHUB_ENV -Append
@@ -62,7 +62,7 @@ jobs:
           Source (AGPLv3): https://github.com/tomislavrupic/FRACTAL-RECALL/releases/tag/v0.3.0
           '@ | Set-Content "release/$folder/INSTALL.txt"
           Compress-Archive "release/$folder" "release/$folder.zip"
-          @{version='0.3.0';sourceSHA256='29f6e0f27c76872862bc6280189c0dc4c769a405a8d0c9650b7169593ca2bc71';sha256=(Get-FileHash "release/$folder.zip" -Algorithm SHA256).Hash.ToLower();testsPassed=$true;platform='Windows-x64';pluginval='1.0.4 strictness 5';commit=$env:GITHUB_SHA;run=$env:GITHUB_RUN_ID} | ConvertTo-Json | Set-Content release/windows-validation.json
+          @{version='0.3.0';sourceSHA256='07628ab996040f437520887231ac5bf45b0eba0cd3b7d24a90c864773100f0e6';sha256=(Get-FileHash "release/$folder.zip" -Algorithm SHA256).Hash.ToLower();testsPassed=$true;platform='Windows-x64';pluginval='1.0.4 strictness 5';commit=$env:GITHUB_SHA;run=$env:GITHUB_RUN_ID} | ConvertTo-Json | Set-Content release/windows-validation.json
           Copy-Item windows-tests.log,windows-pluginval.log release/
       - uses: actions/upload-artifact@v4
         with:

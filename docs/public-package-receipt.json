@@ -1,0 +1,18 @@
+{
+  "version": "0.3.0",
+  "empty_git_directories_retained": true,
+  "clean_extraction_JUCE_revision": "2cdfca8feb300fb424002ba2c2751569e5bacb64",
+  "external_validator_excluded": true,
+  "packages": [
+    {
+      "path": "/Users/thecore/Documents/00 Pixel Records Studio/FRACTAL RECALL/dist/local/FRACTAL-RECALL-0.3.0-source.zip",
+      "sha256": "07628ab996040f437520887231ac5bf45b0eba0cd3b7d24a90c864773100f0e6",
+      "archive_integrity": true
+    },
+    {
+      "path": "/Users/thecore/Documents/00 Pixel Records Studio/FRACTAL RECALL/dist/local/FRACTAL-RECALL-0.3.0-macOS-arm64.zip",
+      "sha256": "16ba7d1fd1de4de95d93f4ddbe66523d500fb28bf9266627b82911c8d2e540a6",
+      "archive_integrity": true
+    }
+  ]
+}
