@@ -1,0 +1,26 @@
+{
+  "version": "0.3.0",
+  "sourceSHA256": "07628ab996040f437520887231ac5bf45b0eba0cd3b7d24a90c864773100f0e6",
+  "sha256": "e1b4a32e2d83c812c44510d2e3232083e5307736d6b1025b2762a5c7a5dfd6f5",
+  "testsPassed": true,
+  "commit": "0cac5acc54c3b1b7680a929df4b90973cdc5c15f",
+  "pluginval": "1.0.4 strictness 5",
+  "platform": "Windows-x64",
+  "run": "37687466428",
+  "archiveIntegrity": true,
+  "binaries": [
+    {
+      "path": "FRACTAL-RECALL-0.3.0-Windows-x64/FRACTAL RECALL.vst3/Contents/x86_64-win/FRACTAL RECALL.vst3",
+      "architecture": "PE AMD64",
+      "bytes": 4779008
+    },
+    {
+      "path": "FRACTAL-RECALL-0.3.0-Windows-x64/FRACTAL RECALL.exe",
+      "architecture": "PE AMD64",
+      "bytes": 5349888
+    }
+  ],
+  "testLogVerified": true,
+  "validatorLogVerified": true,
+  "bytes": 4762670
+}
