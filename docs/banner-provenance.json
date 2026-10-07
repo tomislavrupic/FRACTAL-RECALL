@@ -1,0 +1,9 @@
+{
+  "generator": "built-in image_gen",
+  "prompt": "banner-prompt.txt",
+  "reference": "native FRACTAL RECALL editor, material/color identity only",
+  "file": "site/assets/fractal-recall-banner.png",
+  "sha256": "4d75b93ce90030e4030e84ddcfc1ed366bbd8618cbb19346c87393ff16b6a49b",
+  "web_derivative": "site/assets/banner.jpg",
+  "native_interface_images": "actual FractalPreview snapshots from0.3.0 build"
+}
