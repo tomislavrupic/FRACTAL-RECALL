@@ -1,0 +1,72 @@
+name: Windows x64 build and validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - name: Fetch exact corresponding source
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v0.3.0 --repo $env:GITHUB_REPOSITORY --pattern FRACTAL-RECALL-0.3.0-source.zip --dir incoming
+          if ($LASTEXITCODE -ne 0) { throw 'Source download failed' }
+          $actual = (Get-FileHash incoming/FRACTAL-RECALL-0.3.0-source.zip -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne '29f6e0f27c76872862bc6280189c0dc4c769a405a8d0c9650b7169593ca2bc71') { throw 'Corresponding-source checksum mismatch' }
+          Expand-Archive incoming/FRACTAL-RECALL-0.3.0-source.zip incoming/source
+          $source = (Resolve-Path incoming/source/FRACTAL-RECALL-0.3.0-source).Path
+          "SOURCE_DIR=$source" | Out-File -FilePath $env:GITHUB_ENV -Append
+          $revision = git -C "$source/third_party/JUCE" rev-parse HEAD
+          if ($revision.Trim() -ne '2cdfca8feb300fb424002ba2c2751569e5bacb64') { throw 'JUCE revision mismatch' }
+      - name: Configure and build native Windows x64
+        shell: pwsh
+        run: |
+          cmake -S "$env:SOURCE_DIR" -B build-win -G 'Visual Studio 17 2022' -A x64 -DFRACTAL_PLUGIN=ON "-DJUCE_PATH=$env:SOURCE_DIR/third_party/JUCE" '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>'
+          if ($LASTEXITCODE -ne 0) { throw 'Configure failed' }
+          cmake --build build-win --config Release --parallel 4
+          if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
+      - name: DSP and actual processor checks
+        shell: pwsh
+        run: |
+          ctest --test-dir build-win -C Release --output-on-failure -V | Tee-Object windows-tests.log
+          if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
+      - name: Validate VST3 using pluginval 1.0.4
+        shell: pwsh
+        run: |
+          Invoke-WebRequest 'https://github.com/Tracktion/pluginval/releases/download/v1.0.4/pluginval_Windows.zip' -OutFile pluginval.zip
+          Expand-Archive pluginval.zip validator
+          $validator = Get-ChildItem validator -Recurse -Filter pluginval.exe | Select-Object -First 1
+          if (-not $validator) { throw 'Validator not found' }
+          $bundle = (Resolve-Path 'build-win/FractalRecall_artefacts/Release/VST3/FRACTAL RECALL.vst3').Path
+          & $validator.FullName --strictness-level 5 --random-seed 4242 --validate $bundle | Tee-Object windows-pluginval.log
+          if ($LASTEXITCODE -ne 0) { throw 'VST3 validation failed' }
+      - name: Package validated binaries and evidence
+        shell: pwsh
+        run: |
+          $folder = 'FRACTAL-RECALL-0.3.0-Windows-x64'
+          New-Item -ItemType Directory -Path "release/$folder" -Force
+          Copy-Item 'build-win/FractalRecall_artefacts/Release/VST3/FRACTAL RECALL.vst3' "release/$folder/" -Recurse
+          Copy-Item 'build-win/bin/FRACTAL RECALL.exe' "release/$folder/"
+          Copy-Item "$env:SOURCE_DIR/LICENSE","$env:SOURCE_DIR/THIRD_PARTY_NOTICES.md" "release/$folder/"
+          Copy-Item "$env:SOURCE_DIR/Assets/HRIR" "release/$folder/HRIR-NOTICES" -Recurse
+          @'
+          FRACTAL RECALL 0.3.0 by Pixel Records
+          Windows x64: copy the entire FRACTAL RECALL.vst3 folder to C:\Program Files\Common Files\VST3, then rescan in your DAW.
+          The standalone is an audio effect host and requires an input device.
+          This development build is unsigned. Native CI tests and pluginval passed; DAW listening is not certified.
+          Source (AGPLv3): https://github.com/tomislavrupic/FRACTAL-RECALL/releases/tag/v0.3.0
+          '@ | Set-Content "release/$folder/INSTALL.txt"
+          Compress-Archive "release/$folder" "release/$folder.zip"
+          @{version='0.3.0';sourceSHA256='29f6e0f27c76872862bc6280189c0dc4c769a405a8d0c9650b7169593ca2bc71';sha256=(Get-FileHash "release/$folder.zip" -Algorithm SHA256).Hash.ToLower();testsPassed=$true;platform='Windows-x64';pluginval='1.0.4 strictness 5';commit=$env:GITHUB_SHA;run=$env:GITHUB_RUN_ID} | ConvertTo-Json | Set-Content release/windows-validation.json
+          Copy-Item windows-tests.log,windows-pluginval.log release/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FRACTAL-RECALL-Windows-x64
+          path: release/*
+          if-no-files-found: error
+          retention-days: 30
